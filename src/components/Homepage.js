@@ -16,6 +16,7 @@ export default function Homepage() {
   const [todos, setTodos] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [tempUidd, setTempUidd] = useState("");
+  const [totalPoints, setTotalPoints] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,7 +28,11 @@ export default function Homepage() {
           const data = snapshot.val();
           if (data !== null) {
             Object.values(data).map((todo) => {
-              setTodos((oldArray) => [...oldArray, todo]);
+              if (todo.uidd === 'totalPoints') {
+                setTotalPoints(todo.points);
+              } else {
+                setTodos((oldArray) => [...oldArray, todo]);
+              }
             });
           }
         });
@@ -52,7 +57,8 @@ export default function Homepage() {
     const uidd = uid();
     set(ref(db, `/${auth.currentUser.uid}/${uidd}`), {
       todo: todo,
-      uidd: uidd
+      uidd: uidd,
+      points: 1
     });
 
     setTodo("");
@@ -68,54 +74,76 @@ export default function Homepage() {
   const handleEditConfirm = () => {
     update(ref(db, `/${auth.currentUser.uid}/${tempUidd}`), {
       todo: todo,
-      tempUidd: tempUidd
     });
 
-    setTodo("");
     setIsEdit(false);
+    setTodo("");
   };
 
   // delete
-  const handleDelete = (uid) => {
-    remove(ref(db, `/${auth.currentUser.uid}/${uid}`));
+  const handleDelete = (uidd) => {
+    remove(ref(db, `/${auth.currentUser.uid}/${uidd}`));
   };
+
+  // complete
+  const handleComplete = (uidd) => {
+    remove(ref(db, `/${auth.currentUser.uid}/${uidd}`));
+    updateTotalPoints(totalPoints + 1);
+  };
+
+  // update total points
+  const updateTotalPoints = (points) => {
+    setTotalPoints(points);
+    update(ref(db, `/${auth.currentUser.uid}/totalPoints`), {
+      points: points,
+      uidd: 'totalPoints'
+    });
+  }
 
   return (
     <div className="homepage">
-      <input
-        className="add-edit-input"
-        type="text"
-        placeholder="Add todo..."
-        value={todo}
-        onChange={(e) => setTodo(e.target.value)}
-      />
-
-      {todos.map((todo) => (
-        <div className="todo">
-          <h1>{todo.todo}</h1>
-          <EditIcon
-            fontSize="large"
-            onClick={() => handleUpdate(todo)}
-            className="edit-button"
-          />
-          <DeleteIcon
-            fontSize="large"
-            onClick={() => handleDelete(todo.uidd)}
-            className="delete-button"
-          />
-        </div>
-      ))}
-
-      {isEdit ? (
-        <div>
-        <CheckIcon onClick={handleEditConfirm} className="add-confirm-icon"/>
-        </div>
-      ) : (
-        <div>
-          <AddIcon onClick={writeToDatabase} className="add-confirm-icon" />
-        </div>
-      )}
-        <LogoutIcon onClick={handleSignOut} className="logout-icon" />
-    </div>
+      <div className="header">
+        <h1>Todo App</h1>
+        <button onClick={handleSignOut}>
+          <LogoutIcon />
+        </button>
+      </div>
+      <div className="input">
+        <input
+          type="text"
+          value={todo}
+          onChange={(e) => setTodo(e.target.value)}
+          placeholder="Enter a todo"
+        />
+        {!isEdit ? (
+          <button onClick={writeToDatabase}>
+            <AddIcon />
+          </button>
+        ) : (
+          <button onClick={handleEditConfirm}>
+            <CheckIcon />
+          </button>
+        )}
+      </div>
+      <div className="todos">
+        {todos.map((todo) => (
+          <div key={todo.uidd} className="todo">
+            <p>{todo.todo}</p>
+            <div className="icons">
+              <button onClick={() => handleUpdate(todo)}>
+                <EditIcon />
+              </button>
+              <button onClick={() => handleDelete(todo.uidd)}>
+                <DeleteIcon />
+              </button>
+              <button onClick={() => handleComplete(todo.uidd)}>
+                <CheckIcon />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+      <h2>Total Points: {totalPoints}</h2>
+    </div> 
   );
 }

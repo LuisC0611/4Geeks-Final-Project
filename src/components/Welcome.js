@@ -10,10 +10,12 @@ import "./welcome.css";
 import TodoSVG from '../assets/todo-svg.svg'
 
 export default function Welcome() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isRegistering, setIsRegistering] = useState(false);
   const [registerInformation, setRegisterInformation] = useState({
+    name: "",
     email: "",
     confirmEmail: "",
     password: "",
@@ -29,6 +31,10 @@ export default function Welcome() {
       }
     });
   }, []);
+
+  const handleNameChange = (e) => {
+    setName(e.target.value);
+  };
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -61,6 +67,12 @@ export default function Welcome() {
       registerInformation.email,
       registerInformation.password
     )
+    .then((userCredential) => {
+      const user = userCredential.user;
+      return user.updateProfile({
+        displayName: registerInformation.name
+      });
+    })
       .then(() => {
         navigate("/homepage");
       })
@@ -69,11 +81,22 @@ export default function Welcome() {
 
   return (
     <div className="welcome">
-    <img src={TodoSVG} className="todo-svg" />
-      <h1>Todo-List</h1>
+      {/* <img src={TodoSVG} className="todo-svg" /> */}
+      <h1>Habit-Builder</h1>
       <div className="login-register-container">
         {isRegistering ? (
           <>
+            <input
+              type="text"
+              placeholder="Name"
+              value={registerInformation.name}
+              onChange={(e) =>
+                setRegisterInformation({
+                  ...registerInformation,
+                  name: e.target.value
+                })
+              }
+            />
             <input
               type="email"
               placeholder="Email"
@@ -123,6 +146,7 @@ export default function Welcome() {
           </>
         ) : (
           <>
+            {/* <input type="text" placeholder="Name" onChange={handleNameChange} value={name} /> */}
             <input type="email" placeholder="Email" onChange={handleEmailChange} value={email} />
             <input
               type="password"
@@ -145,3 +169,4 @@ export default function Welcome() {
     </div>
   );
 }
+
