@@ -103,7 +103,7 @@ export default function Homepage() {
   return (
     <div className="homepage">
       <div className="header">
-        <h1>Todo App</h1>
+        <h1>Habit Builder</h1>
         <button onClick={handleSignOut}>
           <LogoutIcon />
         </button>
@@ -144,6 +144,6 @@ export default function Homepage() {
         ))}
       </div>
       <h2>Total Points: {totalPoints}</h2>
-    </div> 
+    </div>
   );
 }

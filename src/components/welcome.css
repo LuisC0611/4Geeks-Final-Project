@@ -3,7 +3,8 @@
 .welcome {
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(122.19deg, #da2079 1.89%, #2a00d5 113.56%);
+  background: darkblue;
+  /* background: linear-gradient(122.19deg, #da2079 1.89%, #2a00d5 113.56%); */
   position: relative;
   overflow: hidden;
 }
@@ -48,7 +49,8 @@
 }
 
 .sign-in-register-button {
-  background: linear-gradient(122.19deg, #da2079 1.89%, #2a00d5 113.56%);
+  background: darkblue;
+  /* background: linear-gradient(122.19deg, #da2079 1.89%, #2a00d5 113.56%); */
   font-size: 20px;
   margin-top: 10px;
   font-family: "Changa One";

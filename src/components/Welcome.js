@@ -27,7 +27,7 @@ export default function Welcome() {
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        navigate("/homepage");
+        navigate("/profile");
       }
     });
   }, []);
@@ -47,7 +47,7 @@ export default function Welcome() {
   const handleSignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then(() => {
-        navigate("/homepage");
+        navigate("/profile");
       })
       .catch((err) => alert(err.message));
   };
@@ -74,7 +74,7 @@ export default function Welcome() {
       });
     })
       .then(() => {
-        navigate("/homepage");
+        navigate("/profile");
       })
       .catch((err) => alert(err.message));
   };
